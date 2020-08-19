@@ -29,14 +29,14 @@ class Market1501(ImageDataset):
     dataset_dir = ''
     dataset_url = 'http://188.138.127.15:81/Datasets/Market-1501-v15.09.15.zip'
 
-    def __init__(self, root='datasets', market1501_500k=False, **kwargs):
+    def __init__(self, root='/media/ivy/research/datasets', market1501_500k=False, **kwargs):
         # self.root = osp.abspath(osp.expanduser(root))
         self.root = root
         self.dataset_dir = osp.join(self.root, self.dataset_dir)
 
         # allow alternative directory structure
         self.data_dir = self.dataset_dir
-        data_dir = osp.join(self.data_dir, 'Market-1501-v15.09.15')
+        data_dir = osp.join(self.data_dir, 'market1501')
         if osp.isdir(data_dir):
             self.data_dir = data_dir
         else:

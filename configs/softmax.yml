@@ -27,5 +27,7 @@ SOLVER:
 TEST:
   IMS_PER_BATCH: 256
 
+OUTPUT_DIR: '/media/ivy/research/reid_baseline/res/resnet50_gap'
+
 
 

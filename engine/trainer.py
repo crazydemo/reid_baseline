@@ -21,7 +21,7 @@ from modeling.losses import TripletLoss
 from solver.build import make_lr_scheduler, make_optimizer
 from utils.meters import AverageMeter
 
-
+os.environ['CUDA_VISIBLE_DEVICES'] = '0, 1'
 class ReidSystem():
     def __init__(self, cfg, logger, writer):
         self.cfg, self.logger, self.writer = cfg, logger, writer
@@ -49,10 +49,15 @@ class ReidSystem():
         self.use_ddp = False
 
     def loss_fns(self, outputs, labels):
-        ce_loss = self.ce_loss(outputs[0], labels)
-        triplet_loss = self.triplet(outputs[1], labels)[0]
-
-        return {'ce_loss': ce_loss, 'triplet': triplet_loss}
+        dic = {}
+        for loss in self.cfg.SOLVER.LOSSTYPE:
+            if loss=='softmax':
+                ce_loss = self.ce_loss(outputs[0], labels)
+                dic['ce_loss'] = ce_loss
+            if loss=='triplet':
+                triplet_loss = self.triplet(outputs[1], labels)[0]
+                dic['triplet'] = triplet_loss
+        return dic
 
     def on_train_begin(self):
         self.best_mAP = -np.inf
@@ -94,9 +99,11 @@ class ReidSystem():
         print(print_str, end=' ')
         
         if (self.global_step+1) % self.log_interval == 0:
-            self.writer.add_scalar('cross_entropy_loss', loss_dict['ce_loss'], self.global_step)
-            self.writer.add_scalar('triplet_loss', loss_dict['triplet'], self.global_step)
-            self.writer.add_scalar('total_loss', loss_dict['total_loss'], self.global_step)
+            for (k,v) in loss_dict.items():
+                self.writer.add_scalar(k, v, self.global_step)
+            # self.writer.add_scalar('cross_entropy_loss', loss_dict['ce_loss'], self.global_step)
+            # self.writer.add_scalar('triplet_loss', loss_dict['triplet'], self.global_step)
+            # self.writer.add_scalar('total_loss', loss_dict['total_loss'], self.global_step)
 
         self.running_loss.update(total_loss.item())
 

@@ -21,7 +21,7 @@ def main():
     parser = argparse.ArgumentParser(description="ReID Model Training")
     parser.add_argument(
         '-cfg', "--config_file", 
-        default="", 
+        default="/media/ivy/research/reid_baseline/configs/softmax.yml",
         metavar="FILE", 
         help="path to config file", 
         type=str
